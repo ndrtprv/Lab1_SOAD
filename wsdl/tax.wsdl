@@ -1,0 +1,57 @@
+<definitions name="MyTaxService"
+    targetNamespace="http://www.examples.com/wsdl/TaxService.wsdl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://www.examples.com/wsdl/TaxService.wsdl"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <message name="CalculateTaxRequest">
+        <part name="income" type="xsd:float"/>
+        <part name="taxRate" type="xsd:float"/>
+    </message>
+
+    <message name="CalculateTaxResponse">
+        <part name="taxAmount" type="xsd:float"/>
+        <part name="militaryTaxAmount" type="xsd:float"/>
+        <part name="totalTaxAmount" type="xsd:float"/>
+    </message>
+
+    <message name="TaxCalculationError">
+        <part name="message" type="xsd:string"/>
+    </message>
+
+    <portType name="TaxPortType">
+        <operation name="CalculateTax">
+            <input message="tns:CalculateTaxRequest"/>
+            <output message="tns:CalculateTaxResponse"/>
+            <fault name="TaxCalculationError" message="tns:TaxCalculationError"/>
+        </operation>
+    </portType>
+
+    <binding name="TaxBinding" type="tns:TaxPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CalculateTax">
+            <soap:operation soapAction="urn:CalculateTax"/>
+            <input>
+                <soap:body use="encoded" namespace="urn:MyTaxService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:MyTaxService"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </output>
+            <fault name="TaxCalculationError">
+                <soap:fault name="TaxCalculationError"
+                    use="encoded"
+                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+                    namespace="urn:MyTaxService"/>
+            </fault>
+        </operation>
+    </binding>
+
+    <service name="MyTaxService">
+        <port name="TaxPort" binding="tns:TaxBinding">
+            <soap:address location="http://localhost:8000/wsdl"/>
+        </port>
+    </service>
+</definitions>
